@@ -1,0 +1,5 @@
+mongodb_bak_tmp
+mongodb_bak_path
+mysqldb_bak_tmp
+mysqldb_bak_path
+.env
