@@ -27,7 +27,7 @@ fi
 TAR_BAK="mongodb_bak_$DATE.tar"
 
 if [ ! $MONGODB_PORT ]; then
-	$MONGODB_PORT=27017
+	MONGODB_PORT=27017
 fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
