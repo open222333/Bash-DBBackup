@@ -31,9 +31,12 @@ cd $OUT_DIR
 #rm -rf $OUT_DIR/*
 mkdir -p $OUT_DIR/$DATE
 
-# 備份全部數據
-# 備份(可先lock MySQL Table(表))
-xtrabackup --user={$MYSQLDB_USER} --password={$MYSQLDB_PASS} --backup --target-dir={$TAR_DIR}
+# 備份全部數據 若有帳密 則執行有帳密的指令
+if [ $MYSQLDB_USER ]; then
+	xtrabackup --user={$MYSQLDB_USER} --password={$MYSQLDB_PASS} --backup --target-dir={$TAR_DIR}
+else
+	echo "需要帳號密碼"
+fi
 
 # 打包為.tar格式
 tar -cvf $TAR_DIR/$TAR_BAK -C$OUT_DIR $DATE

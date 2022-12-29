@@ -31,9 +31,12 @@ cd $OUT_DIR
 #rm -rf $OUT_DIR/*
 mkdir -p $OUT_DIR/$DATE
 
-# 備份全部數據
-# mongodump -h 127.0.0.1:27017 -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase "admin" -o $OUT_DIR/$DATE
-mongodump -h 127.0.0.1:31117 -o $OUT_DIR/$DATE
+# 備份全部數據 若有帳密 則執行有帳密的指令
+if [ $MONGODB_USER ]; then
+	mongodump -h $DB_HOST -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase "admin" -o $OUT_DIR/$DATE
+else
+	mongodump -h $DB_HOST -o $OUT_DIR/$DATE
+fi
 
 # 打包為.tar格式
 tar -cvf $TAR_DIR/$TAR_BAK -C$OUT_DIR $DATE
