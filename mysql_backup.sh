@@ -26,14 +26,9 @@ fi
 # 最終保存的備份文件
 TAR_BAK="mysqldb_bak_$DATE.tar"
 
-cd $OUT_DIR
-
-#rm -rf $OUT_DIR/*
-mkdir -p $OUT_DIR/$DATE
-
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MYSQLDB_USER ]; then
-	xtrabackup --user={$MYSQLDB_USER} --password={$MYSQLDB_PASS} --backup --target-dir={$TAR_DIR}
+	xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$TAR_DIR
 else
 	echo "需要帳號密碼"
 fi
@@ -50,10 +45,7 @@ else
 	echo "no $OUT_DIR/$DATE"
 fi
 
-# # 刪除$DAYS天前的備份文件
-# find $TAR_DIR/ -mtime +$DAYS -delete
-
-# 刪除tar備份包10天前的備份文件
+# 刪除tar備份包$DAYS天前的備份文件
 find $TAR_DIR/ -mtime +$DAYS -name "*.tar" -exec rm -rf {} \;
 
 rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
