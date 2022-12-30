@@ -30,6 +30,10 @@ if [ ! $MONGODB_PORT ]; then
 	MONGODB_PORT=27017
 fi
 
+if [ ! command -v mongodump &> /dev/null ]; then
+	sh `dirname -- "$0"`/tool_install.sh mongodump mongodb-database-tools-*-100.6.0.rpm
+fi
+
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MONGODB_USER ]; then
 	mongodump -h $DB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase "admin" -o $OUT_DIR/$DATE
