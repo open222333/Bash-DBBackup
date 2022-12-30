@@ -30,7 +30,7 @@ if [ ! $MONGODB_PORT ]; then
 	MONGODB_PORT=27017
 fi
 
-if [ ! command -v mongodump &> /dev/null ]; then
+if ! [ -x "$(command -v mongodump)" ]; then
 	sh `dirname -- "$0"`/tool_install.sh mongodump mongodb-database-tools-*-100.6.0.rpm
 fi
 
@@ -67,7 +67,7 @@ fi
 if [ $AUTO_PASSWORD == 1 ]; then
 	rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 else
-	if [ ! command -v sshpass &> /dev/null ]; then
+	if ! [ -x "$(command -v sshpass)" ]; then
 		sh `dirname -- "$0"`/tool_install.sh sshpass
 	fi
 	rsync -Pav -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
