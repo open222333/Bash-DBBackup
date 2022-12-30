@@ -24,7 +24,7 @@ elif [[ ! -d $TAR_DIR ]]; then
 fi
 
 # 最終保存的備份文件
-TAR_BAK="mysqldb_bak_$DATE.tar"
+TAR_BAK="mysqldb_bak_$HOSTNAME-$DATE.tar"
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MYSQLDB_USER ]; then

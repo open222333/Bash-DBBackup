@@ -24,7 +24,7 @@ elif [[ ! -d $TAR_DIR ]]; then
 fi
 
 # 最終保存的備份文件
-TAR_BAK="mongodb_bak_$DATE.tar"
+TAR_BAK="mongodb_bak_$HOSTNAME-$DATE.tar"
 
 if [ ! $MONGODB_PORT ]; then
 	MONGODB_PORT=27017
@@ -58,20 +58,24 @@ fi
 find $TAR_DIR/ -mtime +$DAYS -name "*.tar" -exec rm -rf {} \;
 
 # 使用key
-if [ $USE_KEY == 1 ]; then
-	if [[ ! -e $HOME/.ssh/$KEYNAME ]]; then
-		sh `dirname -- "$0"`/generate_ssh_key.sh
+if [ $USE_KEY ]; then
+	if [ $USE_KEY == 1 ]; then
+		if [[ ! -e $HOME/.ssh/$KEYNAME ]]; then
+			sh `dirname -- "$0"`/generate_ssh_key.sh
+		fi
 	fi
 fi
 
 # 自動
-if [ $AUTO_PASSWORD == 1 ]; then
-	rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
-else
-	if ! [ -x "$(command -v sshpass)" ]; then
-		sh `dirname -- "$0"`/tool_install.sh sshpass
+if [ $AUTO_PASSWORD ]; then
+	if [ $AUTO_PASSWORD == 1 ]; then
+		rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
+	else
+		if ! [ -x "$(command -v sshpass)" ]; then
+			sh `dirname -- "$0"`/tool_install.sh sshpass
+		fi
+		rsync -Pav -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 	fi
-	rsync -Pav -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 fi
 
 exit

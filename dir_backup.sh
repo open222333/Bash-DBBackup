@@ -14,7 +14,7 @@ elif [[ ! -d $TAR_DIR ]]; then
 fi
 
 # 最終保存的備份文件
-TAR_BAK="_bak_$DATE.tar"
+TAR_BAK="_bak_$HOSTNAME-$DATE.tar"
 
 # 打包為.tar格式
 tar -cvf $TAR_DIR/$DIR_BAK_PREFIX$TAR_BAK -C`dirname -- "$DIR_PATH"` `basename -- "$DIR_PATH"`
