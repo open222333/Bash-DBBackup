@@ -4,9 +4,9 @@ else
 	PM_NAME=$1
 fi
 
-if $1 -v apt-get >/dev/null; then
+if [ -x "$(command -v apt-get)" ]; then
 	apt-get install $PM_NAME -y
-elif $1 -v yum >/dev/null; then
+elif [ -x "$(command -v yum)" ]; then
 	yum install $PM_NAME -y
 else
 	echo "other"

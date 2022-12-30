@@ -31,6 +31,7 @@ if [ ! $MONGODB_PORT ]; then
 fi
 
 if ! [ -x "$(command -v mongodump)" ]; then
+	wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
 	sh `dirname -- "$0"`/tool_install.sh mongodump mongodb-database-tools-*-100.6.0.rpm
 fi
 
