@@ -52,6 +52,10 @@ fi
 # 刪除tar備份包$DAYS天前的備份文件
 find $TAR_DIR/ -mtime +$DAYS -name "*.tar" -exec rm -rf {} \;
 
+if [[ ! -e $HOME/.ssh/$KEYNAME ]]; then
+	sh `dirname -- "$0"`/generate_ssh_key.sh
+fi
+
 rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 
 exit
