@@ -69,12 +69,12 @@ fi
 # 自動
 if [ $AUTO_PASSWORD ]; then
 	if [ $AUTO_PASSWORD == 1 ]; then
-		rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
-	else
 		if ! [ -x "$(command -v sshpass)" ]; then
 			sh `dirname -- "$0"`/tool_install.sh sshpass
 		fi
 		rsync -Pav -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
+	else
+		rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 	fi
 fi
 
