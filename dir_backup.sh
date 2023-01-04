@@ -19,18 +19,19 @@ TAR_BAK="_bak_$HOSTNAME-$DATE.tar"
 # 打包為.tar格式
 tar -cvf $TAR_DIR/$DIR_BAK_PREFIX$TAR_BAK -C`dirname -- "$DIR_PATH"` `basename -- "$DIR_PATH"`
 
-# 刪除tar備份包 $DAYS 天前的備份文件
-find $TAR_DIR/ -mtime +$DAYS -name "*.tar" -exec rm -rf {} \;
-
+# 刪除tar備份包$DAYS天前的備份文件
+if [ $DAYS ]; then
+	find $TAR_DIR/ -mtime +$DAYS -name "*.tar" -exec rm -rf {} \;
+fi
 # 自動
 if [ $AUTO_PASSWORD ]; then
 	if [ $AUTO_PASSWORD == 1 ]; then
 		if ! [ -x "$(command -v sshpass)" ]; then
 			sh `dirname -- "$0"`/tool_install.sh sshpass
 		fi
-		rsync -Pav -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$DIR_BAK_PREFIX$TAR_BAK root@$HOST:$TARGET_DIR
+		rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$DIR_BAK_PREFIX$TAR_BAK root@$HOST:$TARGET_DIR
 	else
-		rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
+		rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 	fi
 fi
 

@@ -46,7 +46,9 @@ else
 fi
 
 # 刪除tar備份包$DAYS天前的備份文件
-find $TAR_DIR/ -mtime +$DAYS -name "*.tar" -exec rm -rf {} \;
+if [ $DAYS ]; then
+	find $TAR_DIR/ -mtime +$DAYS -name "*.tar" -exec rm -rf {} \;
+fi
 
 # 使用key
 if [ $USE_KEY ]; then
@@ -63,9 +65,9 @@ if [ $AUTO_PASSWORD ]; then
 		if ! [ -x "$(command -v sshpass)" ]; then
 			sh `dirname -- "$0"`/tool_install.sh sshpass
 		fi
-		rsync -Pav -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
+		rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 	else
-		rsync -Pav -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
+		rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 	fi
 fi
 
