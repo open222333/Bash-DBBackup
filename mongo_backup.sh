@@ -68,15 +68,19 @@ if [ $USE_KEY ]; then
 	fi
 fi
 
-# 自動
-if [ $AUTO_PASSWORD ]; then
-	if [ $AUTO_PASSWORD == 1 ]; then
-		if ! [ -x "$(command -v sshpass)" ]; then
-			sh `dirname -- "$0"`/tool_install.sh sshpass
+if [ $UPLOAD ]; then
+	if [ $UPLOAD == 1 ]; then
+		# 自動
+		if [ $AUTO_PASSWORD ]; then
+			if [ $AUTO_PASSWORD == 1 ]; then
+				if ! [ -x "$(command -v sshpass)" ]; then
+					sh `dirname -- "$0"`/tool_install.sh sshpass
+				fi
+				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
+			else
+				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
+			fi
 		fi
-		rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
-	else
-		rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_DIR
 	fi
 fi
 
