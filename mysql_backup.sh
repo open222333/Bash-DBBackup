@@ -23,14 +23,16 @@ elif [[ ! -d $TAR_DIR ]]; then
     echo "$TAR_DIR already exists but is not a directory" 1>&2
 fi
 
-# 最終保存的備份文件
-TAR_BAK="mysqldb_bak_$HOSTNAME-$DATE.tar"
+# 最終保存的備份文件名稱
+TAR_BAK="_bak-mysql-$DATE.tar"
+TAR_BAK=$DIR_PREFIX$TAR_BAK
+echo "TAR_BAK: $TAR_BAK"
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MYSQLDB_USER ]; then
 	xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
 else
-	echo "需要帳號密碼"
+	echo "MySQL需要帳號密碼"
 fi
 
 # 打包為.tar格式

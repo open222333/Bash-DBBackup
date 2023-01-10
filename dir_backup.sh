@@ -6,11 +6,12 @@ TAR_DIR=`dirname -- "$0"`/db_bak_path
 # 獲取當前系統時間
 DATE=$(date +%Y%m%d%H%M)
 
-# 若有參數則 DIR_PATH指定路徑
+# 若有參數則 依照參數指定DIR_PATH
 if [ $1 ]; then
 	DIR_PATH=$1
 	echo "DIR_PATH: $DIR_PATH"
 else
+	# 依照環境變數指定DIR_PATH
 	if [ $DIR_PATH ]; then
 		echo "DIR_PATH: $DIR_PATH"
 	else
@@ -18,13 +19,30 @@ else
 	fi
 fi
 
-# 若有參數則 DIR_PREFIX指定名稱
+# 若有參數則 依照參數指定DIR_PREFIX
 if [ $2 ]; then
 	DIR_PREFIX=$2
 	echo "DIR_PREFIX: $DIR_PREFIX"
 else
+	# 依照環境變數指定 無指定則使用主機名稱
 	if [ $DIR_PREFIX ]; then
 		echo "DIR_PREFIX: $DIR_PREFIX"
+	else
+		DIR_PREFIX=$HOSTNAME
+		echo "DIR_PREFIX: $DIR_PREFIX"
+	fi
+fi
+
+# 若有參數則 依照參數指定TYPE
+if [ $3 ]; then
+	TYPE=$3
+	echo "TYPE: $TYPE"
+else
+	# 依照環境變數指定
+	# 若TYPE無指定 則為資料夾名稱
+	if [ ! $TYPE ]; then
+		TYPE=`basename -- "$TYPE"`
+		echo "TYPE: $TYPE"
 	fi
 fi
 
@@ -35,11 +53,13 @@ elif [[ ! -d $TAR_DIR ]]; then
     echo "$TAR_DIR already exists but is not a directory" 1>&2
 fi
 
-# 最終保存的備份文件
-TAR_BAK="_bak_$HOSTNAME-$DATE.tar"
+# 最終保存的備份文件名稱
+TAR_BAK="_bak-$TYPE-$DATE.tar"
+TAR_BAK=$DIR_PREFIX$TAR_BAK
+echo "TAR_BAK: $TAR_BAK"
 
 # 打包為.tar格式
-tar -cvf $TAR_DIR/$DIR_PREFIX$TAR_BAK -C`dirname -- "$DIR_PATH"` `basename -- "$DIR_PATH"`
+tar -cvf $TAR_DIR/$TAR_BAK -C`dirname -- "$DIR_PATH"` `basename -- "$DIR_PATH"`
 
 # 刪除tar備份包$DAYS天前的備份文件
 if [ $KEEP_DAYS ]; then
@@ -63,7 +83,7 @@ if [ $UPLOAD ]; then
 				if ! [ -x "$(command -v sshpass)" ]; then
 					sh `dirname -- "$0"`/tool_install.sh sshpass
 				fi
-				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$DIR_PREFIX$TAR_BAK root@$HOST:$TARGET_PATH
+				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 			fi

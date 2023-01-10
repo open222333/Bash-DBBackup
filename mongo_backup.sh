@@ -23,8 +23,10 @@ elif [[ ! -d $TAR_DIR ]]; then
     echo "$TAR_DIR already exists but is not a directory" 1>&2
 fi
 
-# 最終保存的備份文件
-TAR_BAK="mongodb_bak_$HOSTNAME-$DATE.tar"
+# 最終保存的備份文件名稱
+TAR_BAK="_bak-mongo-$DATE.tar"
+TAR_BAK=$DIR_PREFIX$TAR_BAK
+echo "TAR_BAK: $TAR_BAK"
 
 if [ ! $MONGODB_PORT ]; then
 	MONGODB_PORT=27017
