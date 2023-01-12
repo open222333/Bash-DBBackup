@@ -32,7 +32,9 @@ if [ ! $MONGODB_PORT ]; then
 	MONGODB_PORT=27017
 fi
 
+# 若無 mongodump 工具 則安裝
 if ! [ -x "$(command -v mongodump)" ]; then
+	# centos
 	wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
 	sh `dirname -- "$0"`/tool_install.sh mongodump `dirname -- "$0"`/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
 fi

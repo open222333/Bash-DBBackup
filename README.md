@@ -13,23 +13,26 @@
 # 指令
 
 ```bash
-# 打包備份資料夾
-sh path_to_dir/dir_backup.sh [可選 DIR_PATH] [可選 DIR_PREFIX] [可選 TYPE]
+# 資料夾 備份打包
+# 名稱 {$DIR_PREFIX}_bak-{$TYPE}-{DATE=$(date +%Y%m%d%H%M)}.tar
+sh path_to_dir/dir_backup.sh [(可選) DIR_PATH] [(可選) DIR_PREFIX] [(可選) TYPE]
 
-# mongo備份打包
+# mongo 備份打包
+# 名稱 {$DIR_PREFIX}_bak-mongo-{DATE=$(date +%Y%m%d%H%M)}.tar
 sh path_to_dir/mongo_backup.sh
 
-# mysql備份打包
+# mysql 備份打包
+# 名稱 {$DIR_PREFIX}_bak-mysql-{DATE=$(date +%Y%m%d%H%M)}.tar
 sh path_to_dir/mysql_backup.sh
 ```
 
 # 環境變數說明
 
-```env
+```
 # 備份 資料庫主機 ip
 DB_HOST=
 
-# mongo帳密 PORT號(預設值27017)
+# mongo帳密 PORT號(預設27017)
 MONGODB_USER=
 MONGODB_PASS=
 MONGODB_PORT=
@@ -38,7 +41,7 @@ MONGODB_PORT=
 MYSQLDB_USER=
 MYSQLDB_PASS=
 
-# 名稱
+# 名稱 {$DIR_PREFIX}_bak-{$TYPE}-{DATE=$(date +%Y%m%d%H%M)}.tar
 # dir_backup tar檔名前綴(參數優先 預設為主機名稱) 目標路徑(參數優先) TYPE(參數優先)預設為資料夾名稱
 DIR_PREFIX=
 DIR_PATH=
