@@ -41,9 +41,9 @@ fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MONGODB_USER ]; then
-	mongodump -h $DB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase "admin" -o $OUT_DIR/$DATE
+	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase "admin" -o $OUT_DIR/$DATE
 else
-	mongodump -h $DB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
+	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
 fi
 
 # 打包為.tar格式
