@@ -46,6 +46,10 @@ if [ ! $MONGODB_PORT ]; then
 	MONGODB_PORT=27017
 fi
 
+if [ ! $MONGODB_AUTHDB ]; then
+	MONGODB_AUTHDB=admin
+fi
+
 # 若無 mongodump 工具 則安裝
 if ! [ -x "$(command -v mongodump)" ]; then
 	# centos
@@ -55,7 +59,7 @@ fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MONGODB_USER ]; then
-	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase "admin" -o $OUT_DIR/$DATE
+	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
 else
 	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
 fi

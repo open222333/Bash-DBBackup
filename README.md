@@ -29,13 +29,13 @@ sh path_to_dir/mysql_backup.sh [(可選) DIR_PREFIX]
 # 環境變數說明
 
 ```
-# 備份 資料庫主機 ip
-DB_HOST=
-
-# mongo帳密 PORT號(預設27017)
+# mongo帳密 資料庫主機ip PORT號(預設27017)
+MONGODB_HOST=
+MONGODB_PORT=
 MONGODB_USER=
 MONGODB_PASS=
-MONGODB_PORT=
+# 指定的身份驗證數據庫
+MONGODB_AUTHDB=
 
 # mysql帳密
 MYSQLDB_USER=
