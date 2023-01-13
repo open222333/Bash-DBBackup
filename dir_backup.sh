@@ -70,7 +70,7 @@ fi
 if [ $USE_KEY ]; then
 	if [ $USE_KEY == 1 ]; then
 		if [[ ! -e $HOME/.ssh/$KEY_NAME ]]; then
-			sh `dirname -- "$0"`/generate_ssh_key.sh
+			/bin/bash `dirname -- "$0"`/generate_ssh_key.sh
 		fi
 	fi
 fi
@@ -81,16 +81,20 @@ if [ $UPLOAD ]; then
 		if [ $AUTO_PASSWORD ]; then
 			if [ $AUTO_PASSWORD == 1 ]; then
 				if ! [ -x "$(command -v sshpass)" ]; then
-					sh `dirname -- "$0"`/tool_install.sh sshpass
+					/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
 				fi
+				
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+
 				if [ $DEBUG == 1 ]; then
-					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -p$HOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
+
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+
 				if [ $DEBUG == 1 ]; then
-					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
 			fi
 		fi

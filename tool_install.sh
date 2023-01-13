@@ -8,13 +8,13 @@ fi
 
 if [ -x "$(command -v apt-get)" ]; then
 	if [ $USE_SUDO == 1 ]; then
-		sudo apt-get install $PM_NAME -y
+		echo $SUDO_PASSWORD | sudo -S apt-get install $PM_NAME -y
 	else
 		apt-get install $PM_NAME -y
 	fi
 elif [ -x "$(command -v yum)" ]; then
 	if [ $USE_SUDO == 1 ]; then
-		sudo yum install $PM_NAME -y
+		echo $SUDO_PASSWORD | sudo -S yum install $PM_NAME -y
 	else
 		yum install $PM_NAME -y
 	fi

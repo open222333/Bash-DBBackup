@@ -54,19 +54,19 @@ fi
 if ! [ -x "$(command -v mongodump)" ]; then
 	# centos
 	wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
-	sh `dirname -- "$0"`/tool_install.sh mongodump `dirname -- "$0"`/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
+	/bin/bash `dirname -- "$0"`/tool_install.sh mongodump `dirname -- "$0"`/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
 fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MONGODB_USER ]; then
 	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
 	if [ $DEBUG == 1 ]; then
-		echo "mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE"
+		echo "DEBUG指令: mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE"
 	fi
 else
 	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
 	if [ $DEBUG == 1 ]; then
-		echo "mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE"
+		echo "DEBUG指令: mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE"
 	fi
 fi
 
@@ -91,7 +91,7 @@ fi
 if [ $USE_KEY ]; then
 	if [ $USE_KEY == 1 ]; then
 		if [[ ! -e $HOME/.ssh/$KEY_NAME ]]; then
-			sh `dirname -- "$0"`/generate_ssh_key.sh
+			/bin/bash `dirname -- "$0"`/generate_ssh_key.sh
 		fi
 	fi
 fi
@@ -102,16 +102,16 @@ if [ $UPLOAD ]; then
 		if [ $AUTO_PASSWORD ]; then
 			if [ $AUTO_PASSWORD == 1 ]; then
 				if ! [ -x "$(command -v sshpass)" ]; then
-					sh `dirname -- "$0"`/tool_install.sh sshpass
+					/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
 				fi
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 				if [ $DEBUG == 1 ]; then
-					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -p$HOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 				if [ $DEBUG == 1 ]; then
-					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
 			fi
 		fi
