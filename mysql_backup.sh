@@ -51,6 +51,9 @@ fi
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MYSQLDB_USER ]; then
 	xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
+	if [ $DEBUG == 1 ]; then
+		echo "xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
+	fi
 else
 	echo "MySQL需要帳號密碼"
 fi
@@ -90,8 +93,15 @@ if [ $UPLOAD ]; then
 					sh `dirname -- "$0"`/tool_install.sh sshpass
 				fi
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+
+				if [ $DEBUG == 1 ]; then
+					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -p$HOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+				fi
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+				if [ $DEBUG == 1 ]; then
+					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+				fi
 			fi
 		fi
 	fi

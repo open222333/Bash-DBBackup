@@ -60,8 +60,14 @@ fi
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [ $MONGODB_USER ]; then
 	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
+	if [ $DEBUG == 1 ]; then
+		echo "mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE"
+	fi
 else
 	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
+	if [ $DEBUG == 1 ]; then
+		echo "mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE"
+	fi
 fi
 
 # 打包為.tar格式
@@ -99,8 +105,14 @@ if [ $UPLOAD ]; then
 					sh `dirname -- "$0"`/tool_install.sh sshpass
 				fi
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+				if [ $DEBUG == 1 ]; then
+					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -p$HOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+				fi
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+				if [ $DEBUG == 1 ]; then
+					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+				fi
 			fi
 		fi
 	fi

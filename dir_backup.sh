@@ -84,8 +84,14 @@ if [ $UPLOAD ]; then
 					sh `dirname -- "$0"`/tool_install.sh sshpass
 				fi
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+				if [ $DEBUG == 1 ]; then
+					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -p$HOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+				fi
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+				if [ $DEBUG == 1 ]; then
+					echo "rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+				fi
 			fi
 		fi
 	fi
