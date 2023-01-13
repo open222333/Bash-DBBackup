@@ -9,6 +9,20 @@ TAR_DIR=`dirname -- "$0"`/db_bak_path
 # 獲取當前系統時間
 DATE=$(date +%Y%m%d%H%M)
 
+# 若有參數則 依照參數指定DIR_PREFIX
+if [ $1 ]; then
+	DIR_PREFIX=$1
+	echo "DIR_PREFIX: $DIR_PREFIX"
+else
+	# 依照環境變數指定 無指定則使用主機名稱
+	if [ $DIR_PREFIX ]; then
+		echo "DIR_PREFIX: $DIR_PREFIX"
+	else
+		DIR_PREFIX=$HOSTNAME
+		echo "DIR_PREFIX: $DIR_PREFIX"
+	fi
+fi
+
 # 若OUT_DIR不存在就建立
 if [[ ! -e $OUT_DIR ]]; then
     mkdir $OUT_DIR
