@@ -10,12 +10,12 @@ TAR_DIR=`dirname -- "$0"`/db_bak_path
 DATE=$(date +%Y%m%d%H%M)
 
 # 若有參數則 依照參數指定DIR_PREFIX
-if [ $1 ]; then
+if [[ $1 ]]; then
 	DIR_PREFIX=$1
 	echo "DIR_PREFIX: $DIR_PREFIX"
 else
 	# 依照環境變數指定 無指定則使用主機名稱
-	if [ $DIR_PREFIX ]; then
+	if [[ $DIR_PREFIX ]]; then
 		echo "DIR_PREFIX: $DIR_PREFIX"
 	else
 		DIR_PREFIX=$HOSTNAME
@@ -43,21 +43,21 @@ TAR_BAK=$DIR_PREFIX$TAR_BAK
 echo "TAR_BAK: $TAR_BAK"
 
 # 若無 xtrabackup 工具 則安裝
-if ! [ -x "$(command -v xtrabackup)" ]; then
+if ! [[ -x "$(command -v xtrabackup)" ]]; then
 	# centos
 	/bin/bash `dirname -- "$0"`/tool_install.sh percona-xtrabackup-24
 fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
-if [ $MYSQLDB_USER ]; then
-	if [ $USE_SUDO == 1]; then
+if [[ $MYSQLDB_USER ]]; then
+	if [[ $USE_SUDO == 1]]; then
 		echo $SUDO_PASSWORD | sudo -S xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
-		if [ $DEBUG == 1 ]; then
+		if [[ $DEBUG == 1 ]]; then
 			echo "DEBUG指令: echo SUDO_PASSWORD | sudo -S xtrabackup --user=MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
 		fi
 	else
 		xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
-		if [ $DEBUG == 1 ]; then
+		if [[ $DEBUG == 1 ]]; then
 			echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
 		fi
 	fi
@@ -78,36 +78,36 @@ else
 fi
 
 # 刪除tar備份包$DAYS天前的備份文件
-if [ $KEEP_DAYS ]; then
+if [[ $KEEP_DAYS ]]; then
 	find $TAR_DIR/ -mtime +$KEEP_DAYS -name "*.tar" -exec rm -rf {} \;
 fi
 
 # 使用key
-if [ $USE_KEY ]; then
-	if [ $USE_KEY == 1 ]; then
+if [[ $USE_KEY ]]; then
+	if [[ $USE_KEY == 1 ]]; then
 		if [[ ! -e $HOME/.ssh/$KEY_NAME ]]; then
 			/bin/bash `dirname -- "$0"`/generate_ssh_key.sh
 		fi
 	fi
 fi
 
-if [ $UPLOAD ]; then
-	if [ $UPLOAD == 1 ]; then
+if [[ $UPLOAD ]]; then
+	if [[ $UPLOAD == 1 ]]; then
 		# 自動
-		if [ $AUTO_PASSWORD ]; then
-			if [ $AUTO_PASSWORD == 1 ]; then
-				if ! [ -x "$(command -v sshpass)" ]; then
+		if [[ $AUTO_PASSWORD ]]; then
+			if [[ $AUTO_PASSWORD == 1 ]]; then
+				if ! [[ -x "$(command -v sshpass)" ]]; then
 					/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
 				fi
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 
-				if [ $DEBUG == 1 ]; then
+				if [[ $DEBUG == 1 ]]; then
 					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 
-				if [ $DEBUG == 1 ]; then
+				if [[ $DEBUG == 1 ]]; then
 					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
 			fi

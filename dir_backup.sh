@@ -7,12 +7,12 @@ TAR_DIR=`dirname -- "$0"`/db_bak_path
 DATE=$(date +%Y%m%d%H%M)
 
 # 若有參數則 依照參數指定DIR_PATH
-if [ $1 ]; then
+if [[ $1 ]]; then
 	DIR_PATH=$1
 	echo "DIR_PATH: $DIR_PATH"
 else
 	# 依照環境變數指定DIR_PATH
-	if [ $DIR_PATH ]; then
+	if [[ $DIR_PATH ]]; then
 		echo "DIR_PATH: $DIR_PATH"
 	else
 		echo "error: no DIR_PATH"
@@ -20,12 +20,12 @@ else
 fi
 
 # 若有參數則 依照參數指定DIR_PREFIX
-if [ $2 ]; then
+if [[ $2 ]]; then
 	DIR_PREFIX=$2
 	echo "DIR_PREFIX: $DIR_PREFIX"
 else
 	# 依照環境變數指定 無指定則使用主機名稱
-	if [ $DIR_PREFIX ]; then
+	if [[ $DIR_PREFIX ]]; then
 		echo "DIR_PREFIX: $DIR_PREFIX"
 	else
 		DIR_PREFIX=$HOSTNAME
@@ -34,13 +34,13 @@ else
 fi
 
 # 若有參數則 依照參數指定TYPE
-if [ $3 ]; then
+if [[ $3 ]]; then
 	TYPE=$3
 	echo "TYPE: $TYPE"
 else
 	# 依照環境變數指定
 	# 若TYPE無指定 則為資料夾名稱
-	if [ ! $TYPE ]; then
+	if [[ ! $TYPE ]]; then
 		TYPE=`basename -- "$TYPE"`
 		echo "TYPE: $TYPE"
 	fi
@@ -62,13 +62,13 @@ echo "TAR_BAK: $TAR_BAK"
 tar -cvf $TAR_DIR/$TAR_BAK -C`dirname -- "$DIR_PATH"` `basename -- "$DIR_PATH"`
 
 # 刪除tar備份包$DAYS天前的備份文件
-if [ $KEEP_DAYS ]; then
+if [[ $KEEP_DAYS ]]; then
 	find $TAR_DIR/ -mtime +$KEEP_DAYS -name "*.tar" -exec rm -rf {} \;
 fi
 
 # 使用key
-if [ $USE_KEY ]; then
-	if [ $USE_KEY == 1 ]; then
+if [[ $USE_KEY ]]; then
+	if [[ $USE_KEY == 1 ]]; then
 		if [[ ! -e $HOME/.ssh/$KEY_NAME ]]; then
 			/bin/bash `dirname -- "$0"`/generate_ssh_key.sh
 		fi
@@ -76,24 +76,24 @@ if [ $USE_KEY ]; then
 fi
 
 # 自動
-if [ $UPLOAD ]; then
-	if [ $UPLOAD == 1 ]; then
-		if [ $AUTO_PASSWORD ]; then
-			if [ $AUTO_PASSWORD == 1 ]; then
-				if ! [ -x "$(command -v sshpass)" ]; then
+if [[ $UPLOAD ]]; then
+	if [[ $UPLOAD == 1 ]]; then
+		if [[ $AUTO_PASSWORD ]]; then
+			if [[ $AUTO_PASSWORD == 1 ]]; then
+				if ! [[ -x "$(command -v sshpass)" ]]; then
 					/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
 				fi
-				
+
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 
-				if [ $DEBUG == 1 ]; then
+				if [[ $DEBUG == 1 ]]; then
 					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
 
 			else
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 
-				if [ $DEBUG == 1 ]; then
+				if [[ $DEBUG == 1 ]]; then
 					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 				fi
 			fi
