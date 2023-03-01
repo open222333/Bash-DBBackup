@@ -56,9 +56,19 @@ if [[ $MYSQLDB_USER ]]; then
 			echo "DEBUG指令: echo SUDO_PASSWORD | sudo -S xtrabackup --user=MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
 		fi
 	else
-		xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
-		if [[ $DEBUG == 1 ]]; then
-			echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
+		if [[ $MYSQLDB_EXCLUDE_TABLES == 1 ]]; then
+			# 取得 排除資料表
+			EXCLUDE_TABLES=`tr '\n' ' ' < databases-exclude.txt`;
+
+			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --databases-exclude=\"$EXCLUDE_TABLES\" --backup --target-dir=$OUT_DIR/$DATE
+			if [[ $DEBUG == 1 ]]; then
+				echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --databases-exclude=\"$EXCLUDE_TABLES\" --backup --target-dir=$OUT_DIR/$DATE"
+			fi
+		else
+			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
+			if [[ $DEBUG == 1 ]]; then
+				echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
+			fi
 		fi
 	fi
 else
