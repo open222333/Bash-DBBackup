@@ -64,6 +64,8 @@ if [[ $MYSQLDB_USER ]]; then
 			if [[ $DEBUG == 1 ]]; then
 				echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --databases-exclude=\"$EXCLUDE_TABLES\" --backup --target-dir=$OUT_DIR/$DATE"
 			fi
+
+			mysqldump -u$MYSQLDB_USER -p$MYSQLDB_PASS --all-databases --no-data > all-databases-schema.sql
 		else
 			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
 			if [[ $DEBUG == 1 ]]; then
