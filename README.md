@@ -28,7 +28,7 @@ sh path_to_dir/mysql_backup.sh [(可選) DIR_PREFIX]
 
 # 環境變數說明
 
-```
+```ini
 # mongo帳密 資料庫主機ip PORT號(預設27017)
 MONGODB_HOST=
 MONGODB_PORT=
@@ -40,6 +40,8 @@ MONGODB_AUTHDB=
 # mysql帳密
 MYSQLDB_USER=
 MYSQLDB_PASS=
+# 開啟排除資料表功能 依照 dbname.tablename 每行一個紀錄在 databases-exclude.txt 不要有空行, 若為1則啟用
+MYSQLDB_EXCLUDE_TABLES=
 
 # 名稱 {$DIR_PREFIX}_bak-{$TYPE}-{DATE=$(date +%Y%m%d%H%M)}.tar
 # dir_backup tar檔名前綴(指令參數優先 預設為主機名稱) 目標路徑(指令參數優先) TYPE(指令參數優先 預設為資料夾名稱)
@@ -64,6 +66,8 @@ KEY_NAME=
 KEY_TARGET_HOST=
 # 使用sudo安裝套件 若為1則啟用
 USE_SUDO=
+# sudo使用者密碼
+SUDO_PASSWORD=
 # 顯示指令訊息 進行排錯 若為1則啟用
 DEBUG=
 ```

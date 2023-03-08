@@ -60,12 +60,12 @@ if [[ $MYSQLDB_USER ]]; then
 			# 取得 排除資料表
 			EXCLUDE_TABLES=`tr '\n' ' ' < databases-exclude.txt`;
 
-			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --databases-exclude=\"$EXCLUDE_TABLES\" --backup --target-dir=$OUT_DIR/$DATE
+			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --databases-exclude=$EXCLUDE_TABLES --backup --target-dir=$OUT_DIR/$DATE
 			if [[ $DEBUG == 1 ]]; then
-				echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --databases-exclude=\"$EXCLUDE_TABLES\" --backup --target-dir=$OUT_DIR/$DATE"
+				echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --databases-exclude=$EXCLUDE_TABLES --backup --target-dir=$OUT_DIR/$DATE"
 			fi
 
-			mysqldump -u$MYSQLDB_USER -p$MYSQLDB_PASS --all-databases --no-data > all-databases-schema.sql
+			mysqldump -u$MYSQLDB_USER -p$MYSQLDB_PASS --all-databases --no-data > $OUT_DIR/$DATE/all-databases-schema.sql
 		else
 			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
 			if [[ $DEBUG == 1 ]]; then
