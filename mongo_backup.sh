@@ -59,14 +59,24 @@ fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [[ $MONGODB_USER ]]; then
-	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
-	if [[ $DEBUG == 1 ]]; then
-		echo "DEBUG指令: mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE"
+	if [[ $MONDB_EXCLUDE_COLLECTIONS == 1 ]]; then
+		# 取得 排除資料表
+		EXCLUDE_COLLECTIONS=`tr '\n' ' ' < collections-exclude.txt`;
+	else
+		mongodump -h $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
+		if [[ $DEBUG == 1 ]]; then
+			echo "DEBUG指令: mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -u $MONGODB_USER -p MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE"
+		fi
 	fi
 else
-	mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
-	if [[ $DEBUG == 1 ]]; then
-		echo "DEBUG指令: mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE"
+	if [[ $MONDB_EXCLUDE_COLLECTIONS == 1 ]]; then
+		# 取得 排除資料表
+		EXCLUDE_COLLECTIONS=`tr '\n' ' ' < collections-exclude.txt`;
+	else
+		mongodump -h $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
+		if [[ $DEBUG == 1 ]]; then
+			echo "DEBUG指令: mongodump -h $MYSQLDB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE"
+		fi
 	fi
 fi
 

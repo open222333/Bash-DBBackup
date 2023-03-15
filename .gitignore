@@ -3,6 +3,7 @@ db_bak_path
 .env
 test*
 
+collections-exclude.txt
 databases-exclude.txt
 
 # These are some examples of commonly ignored file patterns.
