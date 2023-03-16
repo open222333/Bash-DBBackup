@@ -42,12 +42,20 @@ TAR_BAK="_bak-mongo-$DATE.tar"
 TAR_BAK=$DIR_PREFIX$TAR_BAK
 echo "TAR_BAK: $TAR_BAK"
 
+if [[ ! $MONGODB_HOST ]]; then
+	MONGODB_HOST=127.0.0.1
+fi
+
 if [[ ! $MONGODB_PORT ]]; then
 	MONGODB_PORT=27017
 fi
 
 if [[ ! $MONGODB_AUTHDB ]]; then
 	MONGODB_AUTHDB=admin
+fi
+
+if [[ ! $LOG_LEVEL ]]; then
+	LOG_LEVEL=WARNING
 fi
 
 # 若無 mongodump 工具 則安裝
@@ -59,9 +67,14 @@ fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [[ $MONGODB_USER ]]; then
-	if [[ $MONDB_EXCLUDE_COLLECTIONS == 1 ]]; then
-		# 取得 排除資料表
-		EXCLUDE_COLLECTIONS=`tr '\n' ' ' < collections-exclude.txt`;
+	if [[ $MONGO_EXCLUDE_COLLECTIONS == 1 ]]; then
+		# 排除資料表
+
+		if [[ $MONGODB_AUTHDB ]]; then
+			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
+		else
+			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL
+		fi
 	else
 		mongodump -h $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
 		if [[ $DEBUG == 1 ]]; then
@@ -69,9 +82,9 @@ if [[ $MONGODB_USER ]]; then
 		fi
 	fi
 else
-	if [[ $MONDB_EXCLUDE_COLLECTIONS == 1 ]]; then
+	if [[ $MONGO_EXCLUDE_COLLECTIONS == 1 ]]; then
 		# 取得 排除資料表
-		EXCLUDE_COLLECTIONS=`tr '\n' ' ' < collections-exclude.txt`;
+		python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
 	else
 		mongodump -h $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
 		if [[ $DEBUG == 1 ]]; then

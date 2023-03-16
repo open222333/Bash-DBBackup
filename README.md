@@ -70,4 +70,33 @@ USE_SUDO=
 SUDO_PASSWORD=
 # 顯示指令訊息 進行排錯 若為1則啟用
 DEBUG=
+# 設定紀錄log等級 DEBUG,INFO,WARNING,ERROR,CRITICAL 預設WARNING
+LOG_LEVEL=
+```
+
+# python腳本 mongodump.py用法
+
+```
+備份 使用檔案紀錄需排除集合
+```
+
+```
+python mongodump.py [-h] [-e EXCLUDE_FILE] [-H HOST] [-u USERNAME]
+                    [-p PASSWORD] [-l LOG_LEVEL] [-o OUTPUT_DIR] [-a AUTH_DB]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -e EXCLUDE_FILE, --exclude_file EXCLUDE_FILE
+                        排除集合檔案列表，以db.name格式一行一個。
+  -H HOST, --host HOST  指定mongo主機，格式為ip:port，預設 127.0.0.1:27017。
+  -u USERNAME, --username USERNAME
+                        指定mongo使用者
+  -p PASSWORD, --password PASSWORD
+                        指定mongo密碼
+  -l LOG_LEVEL, --log_level LOG_LEVEL
+                        設定紀錄log等級 DEBUG,INFO,WARNING,ERROR,CRITICAL 預設WARNING
+  -o OUTPUT_DIR, --output_dir OUTPUT_DIR
+                        指定輸出位置資料夾
+  -a AUTH_DB, --auth_db AUTH_DB
+                        指定mongo驗證資料庫
 ```
