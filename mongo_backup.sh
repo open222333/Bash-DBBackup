@@ -69,11 +69,10 @@ fi
 if [[ $MONGODB_USER ]]; then
 	if [[ $MONGO_EXCLUDE_COLLECTIONS == 1 ]]; then
 		# 排除資料表
-
 		if [[ $MONGODB_AUTHDB ]]; then
-			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
-		else
 			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL
+		else
+			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
 		fi
 	else
 		mongodump -h $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
