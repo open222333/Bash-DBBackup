@@ -58,6 +58,10 @@ if [[ ! $LOG_LEVEL ]]; then
 	LOG_LEVEL=WARNING
 fi
 
+if [[ ! $MONGO_PYTHON_VERSION ]]; then
+	MONGO_PYTHON_VERSION=3
+fi
+
 # 若無 mongodump 工具 則安裝
 if ! [[ -x "$(command -v mongodump)" ]]; then
 	# centos
@@ -70,9 +74,17 @@ if [[ $MONGODB_USER ]]; then
 	if [[ $MONGO_EXCLUDE_COLLECTIONS == 1 ]]; then
 		# 排除資料表
 		if [[ $MONGODB_AUTHDB ]]; then
-			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL
+			if [[ $MONGO_PYTHON_VERSION == 3 ]]; then
+				python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL
+			else
+				python mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL
+			fi
 		else
-			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
+			if [[ $MONGO_PYTHON_VERSION == 3 ]]; then
+				python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
+			else
+				python mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
+			fi
 		fi
 	else
 		mongodump -h $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS --authenticationDatabase $MONGODB_AUTHDB -o $OUT_DIR/$DATE
@@ -83,7 +95,11 @@ if [[ $MONGODB_USER ]]; then
 else
 	if [[ $MONGO_EXCLUDE_COLLECTIONS == 1 ]]; then
 		# 取得 排除資料表
-		python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
+		if [[ $MONGO_PYTHON_VERSION == 3 ]]; then
+			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
+		else
+			python mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL
+		fi
 	else
 		mongodump -h $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
 		if [[ $DEBUG == 1 ]]; then
@@ -91,6 +107,7 @@ else
 		fi
 	fi
 fi
+
 
 # 打包為.tar格式
 tar -cvf $TAR_DIR/$TAR_BAK -C$OUT_DIR $DATE
