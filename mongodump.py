@@ -148,7 +148,6 @@ try:
     password = argv.password
     output_dir = argv.output_dir
     auth_db = argv.auth_db
-    read_preference = argv.read_preference
 except Exception as err:
     logger.error(msg=err, exc_info=True)
 
@@ -230,18 +229,38 @@ def mongodump(host: str, db: str, output: str = None, exclude_collections: list 
 
 if __name__ == '__main__':
 
-    if read_preference == 'PRIMARY':
+    logger.debug(f'MongoDB ReadPreference: {argv.read_preference}')
+    if argv.read_preference == 'PRIMARY':
         read_preference = ReadPreference.PRIMARY
-    elif read_preference == 'PRIMARY_PREFERRED':
+    elif argv.read_preference == 'PRIMARY_PREFERRED':
         read_preference = ReadPreference.PRIMARY_PREFERRED
-    elif read_preference == 'SECONDARY':
+    elif argv.read_preference == 'SECONDARY':
         read_preference = ReadPreference.SECONDARY
-    elif read_preference == 'SECONDARY_PREFERRED':
+    elif argv.read_preference == 'SECONDARY_PREFERRED':
         read_preference = ReadPreference.SECONDARY_PREFERRED
-    elif read_preference == 'NEAREST':
+    elif argv.read_preference == 'NEAREST':
         read_preference = ReadPreference.NEAREST
 
-    dbs = MongoClient(host, read_preference=read_preference).list_database_names()
+    if username:
+        if auth_db:
+            client = MongoClient(
+                host,
+                username=username,
+                password=password,
+                authSource=auth_db,
+                read_preference=read_preference
+            )
+        else:
+            client = MongoClient(
+                host,
+                username=username,
+                password=password,
+                read_preference=read_preference
+            )
+    else:
+        client = MongoClient(host, read_preference=read_preference)
+
+    dbs = client.list_database_names()
     r = parse_exclude_file(file_path=exclude_file)
     for db in dbs:
         logger.info(f'匯出資料庫 {db}')
