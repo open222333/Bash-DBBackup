@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from logging.handlers import TimedRotatingFileHandler, RotatingFileHandler
-from pymongo import MongoClient
+from pymongo import MongoClient, ReadPreference
 from datetime import datetime
 import argparse
 import logging
@@ -134,6 +134,7 @@ parser.add_argument('-p', '--password', type=str, default=None, help='指定mong
 parser.add_argument('-l', '--log_level', type=str, default='WARNING', help='設定紀錄log等級 DEBUG,INFO,WARNING,ERROR,CRITICAL 預設WARNING')
 parser.add_argument('-o', '--output_dir', type=str, default=None, help='指定輸出位置資料夾')
 parser.add_argument('-a', '--auth_db', type=str, default=None, help='指定mongo驗證資料庫')
+parser.add_argument('-R', '--read_preference', type=str, default='PRIMARY', help='指定mongo讀取模式。有效值:PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST')
 argv = parser.parse_args()
 
 logger = Log(__name__)
@@ -148,6 +149,7 @@ try:
     password = argv.password
     output_dir = argv.output_dir
     auth_db = argv.auth_db
+    read_preference = argv.read_preference
 except Exception as err:
     logger.error(msg=err, exc_info=True)
 
@@ -228,7 +230,19 @@ def mongodump(host, db, output=None, exclude_collections=None, **args):
 
 
 if __name__ == '__main__':
-    dbs = MongoClient(host).list_database_names()
+
+    if read_preference == 'PRIMARY':
+        read_preference = ReadPreference.PRIMARY
+    elif read_preference == 'PRIMARY_PREFERRED':
+        read_preference = ReadPreference.PRIMARY_PREFERRED
+    elif read_preference == 'SECONDARY':
+        read_preference = ReadPreference.SECONDARY
+    elif read_preference == 'SECONDARY_PREFERRED':
+        read_preference = ReadPreference.SECONDARY_PREFERRED
+    elif read_preference == 'NEAREST':
+        read_preference = ReadPreference.NEAREST
+
+    dbs = MongoClient(host, read_preference=read_preference).list_database_names()
     r = parse_exclude_file(file_path=exclude_file)
     for db in dbs:
         logger.info('匯出資料庫 {}'.format(db))

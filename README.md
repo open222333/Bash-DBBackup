@@ -103,4 +103,7 @@ python mongodump27.py [-h] [-e EXCLUDE_FILE] [-H HOST] [-u USERNAME]
 							指定輸出位置資料夾
 		-a AUTH_DB, --auth_db AUTH_DB
 							指定mongo驗證資料庫
+		-R READ_PREFERENCE, --read_preference READ_PREFERENCE
+                        指定mongo讀取模式。有效值:PRIMARY,PRIMARY_
+                        PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST
 ```
