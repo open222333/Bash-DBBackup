@@ -50,26 +50,40 @@ fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
 if [[ $MYSQLDB_USER ]]; then
-	if [[ $USE_SUDO == 1]]; then
+	if [[ $USE_SUDO == 1 ]]; then
 		echo $SUDO_PASSWORD | sudo -S xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
 		if [[ $DEBUG == 1 ]]; then
 			echo "DEBUG指令: echo SUDO_PASSWORD | sudo -S xtrabackup --user=MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
 		fi
 	else
-		if [[ $MYSQLDB_EXCLUDE_TABLES == 1 ]]; then
-			# 取得 排除資料表
-			EXCLUDE_TABLES=`tr '\n' ' ' < databases-exclude.txt`;
-
-			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --databases-exclude=$EXCLUDE_TABLES --backup --target-dir=$OUT_DIR/$DATE
-			if [[ $DEBUG == 1 ]]; then
-				echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --databases-exclude=$EXCLUDE_TABLES --backup --target-dir=$OUT_DIR/$DATE"
+		if [[ $MYSQLDB_ONLY_SCHEMA == 1 ]]; then
+			# 若$OUT_DIR/$DATE不存在就建立
+			if [[ ! -e $OUT_DIR/$DATE ]]; then
+				mkdir $OUT_DIR/$DATE
+			elif [[ ! -d $OUT_DIR/$DATE ]]; then
+				echo "$OUT_DIR/$DATE already exists but is not a directory" 1>&2
 			fi
 
-			mysqldump -u$MYSQLDB_USER -p$MYSQLDB_PASS --all-databases --no-data > $OUT_DIR/$DATE/all-databases-schema.sql
+			# 匯出 資料庫結構
+			mysqldump -u$MYSQLDB_USER -p$MYSQLDB_PASS --all-databases --no-data > $OUT_DIR/$DATE/all-databases-schema-$DATE.sql
 		else
-			xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
-			if [[ $DEBUG == 1 ]]; then
-				echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
+			if [[ $MYSQLDB_EXCLUDE_TABLES == 1 ]]; then
+
+				# 取得 排除資料表
+				EXCLUDE_TABLES=`tr '\n' ' ' < databases-exclude.txt`;
+
+				xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --databases-exclude="$EXCLUDE_TABLES" --backup --target-dir=$OUT_DIR/$DATE
+				if [[ $DEBUG == 1 ]]; then
+					echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --databases-exclude=\"$EXCLUDE_TABLES\" --backup --target-dir=$OUT_DIR/$DATE"
+				fi
+
+				# 匯出 資料庫結構
+				mysqldump -u$MYSQLDB_USER -p$MYSQLDB_PASS --all-databases --no-data > $OUT_DIR/$DATE/all-databases-schema-$DATE.sql
+			else
+				xtrabackup --user=$MYSQLDB_USER --password=$MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE
+				if [[ $DEBUG == 1 ]]; then
+					echo "DEBUG指令: xtrabackup --user=$MYSQLDB_USER --password=MYSQLDB_PASS --backup --target-dir=$OUT_DIR/$DATE"
+				fi
 			fi
 		fi
 	fi
