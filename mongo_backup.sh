@@ -79,15 +79,15 @@ if [[ $MONGODB_USER ]]; then
 		# 排除資料表
 		if [[ $MONGODB_AUTHDB ]]; then
 			if [[ $MONGO_PYTHON_VERSION == 3 ]]; then
-				python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
+				python `dirname -- "$0"`/mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
 			else
-				python mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
+				python `dirname -- "$0"`/mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -a $MONGODB_AUTHDB -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
 			fi
 		else
 			if [[ $MONGO_PYTHON_VERSION == 3 ]]; then
-				python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
+				python `dirname -- "$0"`/mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
 			else
-				python mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
+				python `dirname -- "$0"`/mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -u $MONGODB_USER -p $MONGODB_PASS -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
 			fi
 		fi
 	else
@@ -100,9 +100,9 @@ else
 	if [[ $MONGO_EXCLUDE_COLLECTIONS == 1 ]]; then
 		# 取得 排除資料表
 		if [[ $MONGO_PYTHON_VERSION == 3 ]]; then
-			python mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
+			python `dirname -- "$0"`/mongodump.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
 		else
-			python mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
+			python `dirname -- "$0"`/mongodump27.py -H $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE -e 'collections-exclude.txt' -l $LOG_LEVEL -R $MONGO_READ_PREFERENCE
 		fi
 	else
 		mongodump -h $MONGODB_HOST:$MONGODB_PORT -o $OUT_DIR/$DATE
