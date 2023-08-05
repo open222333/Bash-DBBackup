@@ -1,4 +1,4 @@
-# Bash-SQL_Backup
+# Bash-DBBackup
 
 ```
 輸出tar檔至db_bak_path
