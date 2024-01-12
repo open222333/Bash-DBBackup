@@ -1,6 +1,7 @@
 # Bash-DBBackup
 
 ```
+備份 DB 腳本
 輸出tar檔至db_bak_path
 ```
 
