@@ -15,7 +15,7 @@ DATETIME=$(date +%Y%m%d%H%M)
 DATE=$(date +%Y%m%d)
 
 # rsync log 名稱
-LOG_NAME="mongo_$DATE.log"
+LOG_NAME="$LOG_DIR/mongo_$DATE.log"
 
 # 若有參數則 依照參數指定DIR_PREFIX
 if [[ $1 ]]; then
