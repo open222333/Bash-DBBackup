@@ -134,37 +134,35 @@ fi
 
 if [[ $UPLOAD && $UPLOAD == 1 ]]; then
 	# 自動
-	if [[ $AUTO_PASSWORD ]]; then
-		if [[ $AUTO_PASSWORD == 1 ]]; then
-			if ! [[ -x "$(command -v sshpass)" ]]; then
-				/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
-			fi
-			if [[ $RSYNC_LOG && $RSYNC_LOG == 1 ]]; then
-				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH  --log-file=$LOG_NAME
+	if [[ $AUTO_PASSWORD && $AUTO_PASSWORD == 1 ]]; then
+		if ! [[ -x "$(command -v sshpass)" ]]; then
+			/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
+		fi
+		if [[ $RSYNC_LOG && $RSYNC_LOG == 1 ]]; then
+			rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH  --log-file=$LOG_NAME
 
-				if [[ $DEBUG && $DEBUG == 1 ]]; then
-					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH" --log-file=$LOG_NAME
-				fi
-			else
-				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
-
-				if [[ $DEBUG && $DEBUG == 1 ]]; then
-					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
-				fi
+			if [[ $DEBUG && $DEBUG == 1 ]]; then
+				echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH" --log-file=$LOG_NAME
 			fi
 		else
-			if [[ $RSYNC_LOG && $RSYNC_LOG == 1 ]]; then
-				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH --log-file=$LOG_NAME
+			rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
 
-				if [[ $DEBUG && $DEBUG == 1 ]]; then
-					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH --log-file=$LOG_NAME"
-				fi
-			else
-				rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+			if [[ $DEBUG && $DEBUG == 1 ]]; then
+				echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e \"sshpass -pHOST_PASSWORD ssh\" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
+			fi
+		fi
+	else
+		if [[ $RSYNC_LOG && $RSYNC_LOG == 1 ]]; then
+			rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH --log-file=$LOG_NAME
 
-				if [[ $DEBUG && $DEBUG == 1 ]]; then
-					echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
-				fi
+			if [[ $DEBUG && $DEBUG == 1 ]]; then
+				echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH --log-file=$LOG_NAME"
+			fi
+		else
+			rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
+
+			if [[ $DEBUG && $DEBUG == 1 ]]; then
+				echo "DEBUG指令: rsync -Pav --temp-dir=/tmp --remove-source-files -e ssh $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH"
 			fi
 		fi
 	fi
