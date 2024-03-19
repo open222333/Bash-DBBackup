@@ -1,30 +1,20 @@
 #!/bin/bash
 
-# 若有參數則 依照參數指定 保留天數
-if [[ $1 ]]; then
-	DAYS_TO_KEEP=$1
+# 依照環境變數指定 保留天數 無指定則 3 天
+if [[ $RSYNC_LOG_DAYS_TO_KEEP ]]; then
+	DAYS_TO_KEEP=$RSYNC_LOG_DAYS_TO_KEEP
 else
-	# 依照環境變數指定 無指定則 3 天
-	if [[ $RSYNC_LOG_DAYS_TO_KEEP ]]; then
-		DAYS_TO_KEEP=$RSYNC_LOG_DAYS_TO_KEEP
-	else
-		DAYS_TO_KEEP=3
-	fi
+	DAYS_TO_KEEP=3
 fi
-echo "DAYS_TO_KEEP: $DAYS_TO_KEEP"
+echo "保留天數: $DAYS_TO_KEEP"
 
-# 若有參數則 依照參數指定 日誌文件目錄
-if [[ $2 ]]; then
-	LOG_DIR=$2
+# 依照環境變數指定 日誌文件目錄 無指定則 logs
+if [[ $RSYNC_LOG_DIR ]]; then
+	LOG_DIR=$RSYNC_LOG_DIR
 else
-	# 依照環境變數指定 無指定則 logs
-	if [[ $RSYNC_LOG_DIR ]]; then
-		LOG_DIR=$RSYNC_LOG_DIR
-	else
-		LOG_DIR="logs"
-	fi
+	LOG_DIR="logs"
 fi
-echo "LOG_DIR: $LOG_DIR"
+echo "日誌文件目錄: $LOG_DIR"
 
 # 判斷日誌文件目錄是否存在
 if [ -d "$LOG_DIR" ]; then
