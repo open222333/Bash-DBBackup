@@ -3,6 +3,8 @@ db_bak_path
 .env
 test*
 
+logs/
+
 collections-exclude.txt
 databases-exclude.txt
 
