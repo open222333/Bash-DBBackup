@@ -82,7 +82,7 @@ if [[ $MYSQLDB_USER ]]; then
 			# 匯出 資料庫結構
 			mysqldump -u$MYSQLDB_USER -p$MYSQLDB_PASS --all-databases --no-data > $OUT_DIR/$DATETIME/all-databases-schema-$DATETIME.sql
 		else
-			if [[ $MYSQLDB_EXCLUDE_TABLES == 1 ]]; then
+			if [[ $MYSQLDB_EXCLUDE == 1 ]]; then
 
 				# 取得 排除資料表
 				EXCLUDE_TABLES=`tr '\n' ' ' < databases-exclude.txt`;
