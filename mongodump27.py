@@ -22,8 +22,10 @@ class Log():
         if not os.path.exists(self.log_path):
             os.makedirs(self.log_path)
 
-        self.log_file = os.path.join(self.log_path, '{}-all.log'.format(log_name))
-        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        self.log_file = os.path.join(
+            self.log_path, '{}-all.log'.format(log_name))
+        self.formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     def set_log_path(self, log_path):
         """設置log檔存放位置
@@ -53,8 +55,10 @@ class Log():
         Returns:
             TimedRotatingFileHandler: _description_
         """
-        self.log_file = os.path.join(self.log_path, '{}-{}.log'.format(self.log_name, self.now_time))
-        handler = TimedRotatingFileHandler(self.log_file, when='D', backupCount=days)
+        self.log_file = os.path.join(
+            self.log_path, '{}-{}.log'.format(self.log_name, self.now_time))
+        handler = TimedRotatingFileHandler(
+            self.log_file, when='D', backupCount=days)
         handler.setFormatter(self.formatter)
         self.logger.addHandler(handler)
 
@@ -69,7 +73,8 @@ class Log():
         Returns:
             RotatingFileHandler: _description_
         """
-        handler = RotatingFileHandler(self.log_file, maxBytes=size, backupCount=file_amount)
+        handler = RotatingFileHandler(
+            self.log_file, maxBytes=size, backupCount=file_amount)
         handler.setFormatter(self.formatter)
         self.logger.addHandler(handler)
 
@@ -127,14 +132,22 @@ class Log():
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-e', '--exclude_file', type=str, default='collections-exclude.txt', help='排除集合檔案列表，以db.name格式一行一個。')
-parser.add_argument('-H', '--host', type=str, default='127.0.0.1:27017', help='指定mongo主機，格式為ip:port，預設 127.0.0.1:27017。')
-parser.add_argument('-u', '--username', type=str, default=None, help='指定mongo使用者')
-parser.add_argument('-p', '--password', type=str, default=None, help='指定mongo密碼')
-parser.add_argument('-l', '--log_level', type=str, default='WARNING', help='設定紀錄log等級 DEBUG,INFO,WARNING,ERROR,CRITICAL 預設WARNING')
-parser.add_argument('-o', '--output_dir', type=str, default=None, help='指定輸出位置資料夾')
-parser.add_argument('-a', '--auth_db', type=str, default=None, help='指定mongo驗證資料庫')
-parser.add_argument('-R', '--read_preference', type=str, default='PRIMARY', help='指定mongo讀取模式。有效值:PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST')
+parser.add_argument('-e', '--exclude_file', type=str,
+                    default='collections-exclude.txt', help='排除集合檔案列表，以db.name格式一行一個。')
+parser.add_argument('-H', '--host', type=str, default='127.0.0.1:27017',
+                    help='指定mongo主機，格式為ip:port，預設 127.0.0.1:27017。')
+parser.add_argument('-u', '--username', type=str,
+                    default=None, help='指定mongo使用者')
+parser.add_argument('-p', '--password', type=str,
+                    default=None, help='指定mongo密碼')
+parser.add_argument('-l', '--log_level', type=str, default='WARNING',
+                    help='設定紀錄log等級 DEBUG,INFO,WARNING,ERROR,CRITICAL 預設WARNING')
+parser.add_argument('-o', '--output_dir', type=str,
+                    default=None, help='指定輸出位置資料夾')
+parser.add_argument('-a', '--auth_db', type=str,
+                    default=None, help='指定mongo驗證資料庫')
+parser.add_argument('-R', '--read_preference', type=str, default='PRIMARY',
+                    help='指定mongo讀取模式。有效值:PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST')
 argv = parser.parse_args()
 
 logger = Log(__name__)
@@ -164,33 +177,42 @@ def parse_exclude_file(file_path):
     """
     result = {}
     logger.info('解析 {} 中'.format(file_path))
+
+    full_collection_pattern = re.compile(
+        r'(?P<database>\w+)\.(?P<collection>\w+)')
+
     try:
         with open(file_path, 'r') as f:
             items = f.read().split('\n')
             for item in items:
                 if item != '':
-                    m = re.match(r'(?P<db>\w+)\.(?P<collection>\w+)', item)
-                    db = m.group('db')
-                    collection = m.group('collection')
-
-                    if db not in result.keys():
-                        result[db] = [collection]
+                    m = re.search(full_collection_pattern, item)
+                    if m:
+                        database = m.group('database')
+                        collection = m.group('collection')
                     else:
-                        result[db].append(collection)
+                        database = item
+                        collection = '*'
+
+                    if database not in result.keys():
+                        result[database] = [collection]
+                    else:
+                        result[database].append(collection)
         logger.info('解析 {} 完成'.format(file_path))
     except Exception as err:
         logger.error('解析 {} 失敗: {}'.format(file_path, err), exc_info=True)
     return result
 
 
-def mongodump(host, db, output=None, exclude_collections=None, **args):
+def mongodump(host, db, output=None, exclude_databases=None, exclude_collections=None, **args):
     """mongo匯出至指定資料夾
 
     Args:
         host (str): mongodb主機 ip:port
         db (str): 資料庫名稱
         output (str, optional): 指定輸出位置. Defaults to None.
-        exclude_collections (list, optional): 必須指定db,需排除的集合. Defaults to None.
+        exclude_collections (list, optional): 必須指定資料庫,需排除的集合. Defaults to None.
+        exclude_databases (list, optional): 需排除的資料庫. Defaults to None.
         collection (str, optional): 集合(collection)名稱 None則匯出全部. Defaults to None.
         username (str, optional): 使用者名稱. Defaults to None.
         password (str, optional): 使用者密碼. Defaults to None.
@@ -205,12 +227,15 @@ def mongodump(host, db, output=None, exclude_collections=None, **args):
     if not os.path.exists(output):
         os.makedirs(output)
 
+    command = 'mongodump -h {} -d {} -o {}'.format(host, db, output)
+
     if exclude_collections:
-        command = 'mongodump -h {} -d {} -o {}'.format(host, db, output)
         for c in exclude_collections:
             command += ' --excludeCollection={}'.format(c)
-    else:
-        command = 'mongodump -h {} -d {} -o {}'.format(host, db, output)
+
+    if exclude_databases:
+        for d in exclude_databases:
+            command += ' --excludeDatabase={}'.format(d)
 
     if 'username' in args.keys() and args["username"] != None:
         command += ' -u {}'.format(args["username"])
@@ -262,10 +287,10 @@ if __name__ == '__main__':
         client = MongoClient(host, read_preference=read_preference)
 
     dbs = client.list_database_names()
-    r = parse_exclude_file(file_path=exclude_file)
+    exclude_target = parse_exclude_file(file_path=exclude_file)
     for db in dbs:
         logger.info('匯出資料庫 {}'.format(db))
-        if db not in r.keys():
+        if db not in exclude_target.keys():
             mongodump(
                 host=host,
                 db=db,
@@ -275,7 +300,7 @@ if __name__ == '__main__':
                 auth_db=auth_db
             )
         else:
-            for collection in r[db]:
+            for collection in exclude_target[db]:
                 logger.info('排除 {}.{}'.format(db, collection))
             mongodump(
                 host=host,
@@ -283,6 +308,6 @@ if __name__ == '__main__':
                 username=username,
                 password=password,
                 output=output_dir,
-                exclude_collections=r[db],
+                exclude_collections=exclude_target[db],
                 auth_db=auth_db
             )

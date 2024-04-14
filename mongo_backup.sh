@@ -85,7 +85,7 @@ fi
 if ! [[ -x "$(command -v mongodump)" ]]; then
 	# centos
 	wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
-	/bin/bash `dirname -- "$0"`/tool_install.sh mongodump `dirname -- "$0"`/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
+	/bin/bash `dirname -- "$0"`/src/script/tool_install.sh mongodump `dirname -- "$0"`/mongodb-database-tools-rhel70-x86_64-100.6.1.rpm
 fi
 
 # 備份全部數據 若有帳密 則執行有帳密的指令
@@ -149,7 +149,7 @@ fi
 if [[ $USE_KEY ]]; then
 	if [[ $USE_KEY == 1 ]]; then
 		if [[ ! -e $HOME/.ssh/$KEY_NAME ]]; then
-			/bin/bash `dirname -- "$0"`/generate_ssh_key.sh
+			/bin/bash `dirname -- "$0"`/src/script/generate_ssh_key.sh
 		fi
 	fi
 fi
@@ -158,7 +158,7 @@ if [[ $UPLOAD && $UPLOAD == 1 ]]; then
 	# 自動
 	if [[ $AUTO_PASSWORD && $AUTO_PASSWORD == 1 ]]; then
 		if ! [[ -x "$(command -v sshpass)" ]]; then
-			/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
+			/bin/bash `dirname -- "$0"`/src/script/tool_install.sh sshpass
 		fi
 		if [[ $RSYNC_LOG && $RSYNC_LOG == 1 ]]; then
 			rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH  --log-file=$LOG_NAME

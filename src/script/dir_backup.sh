@@ -70,7 +70,7 @@ fi
 if [[ $USE_KEY ]]; then
 	if [[ $USE_KEY == 1 ]]; then
 		if [[ ! -e $HOME/.ssh/$KEY_NAME ]]; then
-			/bin/bash `dirname -- "$0"`/generate_ssh_key.sh
+			/bin/bash `dirname -- "$0"`/src/script/generate_ssh_key.sh
 		fi
 	fi
 fi
@@ -81,7 +81,7 @@ if [[ $UPLOAD ]]; then
 		if [[ $AUTO_PASSWORD ]]; then
 			if [[ $AUTO_PASSWORD == 1 ]]; then
 				if ! [[ -x "$(command -v sshpass)" ]]; then
-					/bin/bash `dirname -- "$0"`/tool_install.sh sshpass
+					/bin/bash `dirname -- "$0"`/src/script/tool_install.sh sshpass
 				fi
 
 				rsync -Pav --temp-dir=/tmp --remove-source-files -e "sshpass -p$HOST_PASSWORD ssh" $TAR_DIR/$TAR_BAK root@$HOST:$TARGET_PATH
